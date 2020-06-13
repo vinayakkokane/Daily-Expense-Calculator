@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal expense</title>
+    <link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+     />
+    <script
+			defer
+			src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+			integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
+            crossorigin="anonymous"
+	></script>
+    
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">Daily Expenses Calculator</span>
+        <span class="navbar-brand mb-0 h1"id="headingTotal"></span>
+
+    </nav>
+    <div class="container-fluid bg-light" style="min-height: 100vh">
+        <div class="container">
+            <div class="jumbotron mt-4">
+                <div class="input-group mb-3">
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="inputAmount"
+                        placeholder="Amount spent"
+                        aria-label="Amount spent"
+                        aria-describedby="spent in rupee"
+                    />
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="spent in rupee">₹</span>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="spent at">@</span>
+                    </div>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="inputDesc"
+                        placeholder="spent On"
+                        aria-label="spent On"
+                        aria-describedby="spent at"
+                    />
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" id="btnAddExpense">Add</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <ul class="list-group" id="expenseTable">
+                </u1>
+
+        </div>
+    </div>
+    <h1 id="headingTotal"></h1>
+    
+    <script>
+
+        // get the heading element
+        const headingEl = document.querySelector("#headingTotal");
+
+        // get ref to desc
+         const inputDescEl = document.querySelector("#inputDesc");
+        
+        // ref to ip amnt
+        const inputElement = document.querySelector("#inputAmount");
+
+        // get ref to table 
+        const expenseTableEl = document.querySelector("#expenseTable");
+
+        // init expense at 0
+        let totalExpense = 0;
+
+        // set the heading element to TotalExpense
+        headingEl.textContent = totalExpense;
+
+        // allExpense in an array
+        const allExpense = [];
+
+        // OnButtonClick add ip to btnAddExpense
+        
+        function addExpenseToTotal(){
+
+            const expenseItem = {};
+            // read the value from inputAmount
+
+            const textAmount = inputElement.value;
+
+            // read the desc from inputdesc
+            const textDesc = inputDescEl.value; 
+
+            // convert it to number 
+            
+            const expense = parseInt(textAmount,10);
+
+            // put it in objects
+            expenseItem.desc = textDesc;
+            expenseItem.amount = expense;
+            expenseItem.time = new Date();
+
+
+            allExpense.push (expenseItem);
+            
+            
+            // add that value to totalExpenses
+
+            totalExpense = totalExpense + expense;
+
+            const someText =`The total expense is : ${totalExpense}`;
+            headingEl.textContent = someText;
+
+            // const data1 = allExpense[0];
+            // const data2 = allExpense[1];
+
+            // const data1Text = `1) Expenses: ${data1.amount} , Description: ${data1.desc}`;
+            // const data2Text = ` 2) Expenses: ${data2.amount} , Description: ${data2.desc}`;
+
+            // const tableText = `
+            //     <div> ${data1Text}</div>
+            //     <div> ${data2Text}</div>
+            
+          renderList(allExpense);
+
+        }
+
+        const element = document.querySelector("#btnAddExpense");
+        element.addEventListener("click", addExpenseToTotal, false);
+
+        function getDateString(moment){
+            return moment.toLocaleDateString('en-US',
+            {year : 'numeric',
+            month: 'long',
+            day: 'numeric'})
+            
+            
+        }
+
+        function deleteItem(dateValue){
+            const newArr = allExpense
+                            .filter(expense => expense.time.valueOf() !== dateValue)
+        
+            renderList(newArr);
+        }
+          
+
+        function renderList(ListArr){
+                const allExpenseHTML = ListArr.map(expense=> createListProduct(expense) );
+                const joinedAllExpenseHTML = allExpenseHTML.join("");
+                expenseTableEl.innerHTML = joinedAllExpenseHTML;
+
+        }
+        
+
+        function createListProduct({desc,amount,time}) {
+            return `
+                        <li class="list-group-item d-flex justify-content-between">
+							<div class="d-flex flex-column">
+								${desc}
+                                <small class="text-muted">${getDateString(time)}</small>
+                                <span class = "px=5">
+                                    ${amount}
+                                </span>
+                                <button 
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    onclick = "deleteItem(${time.valueOf()})"
+                                    >
+                                    <i class="fas fa-minus-square" aria-hidden="true"></i>		
+                                </button>
+							</div>
+						</li>
+            `
+        }
+
+        
+
+    </script>
+</body>
+</html>
